@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import {connectDataBase} from "../../../lib/db";
-import {verifyPassword} from "../../../lib/auth";
+import {hashPassword, verifyPassword} from "../../../lib/auth";
 
 
 export default NextAuth({
@@ -14,20 +14,26 @@ export default NextAuth({
         Providers.Credentials({
             async authorize(credentials) {
                 const db = await connectDataBase();
-                const collection = db.collection('user');
+                const collection = db.collection('users');
 
                 const user = await collection.findOne({email: credentials.email});
 
+                console.log(user)
+                console.log(credentials.email)
+                console.log(credentials)
                 if (!user) {
                     throw new Error("유정벗어")
                 }
 
-                if (!await verifyPassword(user.password, credentials.password)) {
+                const pw = "a";
+                const aa = await hashPassword(pw, 12);
+                const newVar = await verifyPassword(credentials.password, user.password);
+                if (!newVar) {
                     throw new Error("비번틀려")
                 }
 
                 //jwt tk 생성해줌 ㅋㅋ
-                return {email}
+                return {email: credentials.email}
             },
         })
     ],
