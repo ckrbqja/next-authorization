@@ -20,10 +20,19 @@ function UserProfile() {
     // }
 
 
+    function changePwdHandler(req) {
+        fetch('/api/user/change-password',{
+            method: 'PATCH',
+            body: JSON.stringify(req),
+            headers: {
+                'Content-Type':'application/json'
+            }
+        })
+    }
     return (
         <section className={classes.profile}>
             <h1>Your User Profile</h1>
-            <ProfileForm/>
+            <ProfileForm onChangePwd={changePwdHandler}/>
         </section>
     );
 }
